@@ -33,8 +33,7 @@ described [here](https://creativecommons.org/licenses/by/4.0/)
     - [Key-Object: `namespaces`](#key-object-namespaces)
       - [Namespace key-value: `name`](#namespace-key-value-name)
       - [Namespace key-value: `description`](#namespace-key-value-description)
-      - [Namespace key-value: `major_version`](#namespace-key-value-major_version)
-      - [Namespace key-value: `minor_version`](#namespace-key-value-minor_version)
+      - [Namespace key-value: `version`](#namespace-key-value-version)
     - [Namespace list object: `typedefs`](#namespace-list-object-typedefs)
       - [Typedef key-value: `name`](#typedef-key-value-name)
       - [Typedef key-value: `description`](#typedef-key-value-description)
@@ -147,7 +146,7 @@ The following features are yet to be determined:
 ## Namespace versioning
 
 VSC namespaces can optionally have a major and minor version,
-specified by `major_version` and `minor_version` keys.
+specified by `version` key.
 
 Namespace version management lets a client implementation have
 expectations that a server implementation will support a specific
@@ -180,7 +179,7 @@ arguments, enumeration types, and struct members.
 (Imported from VSS)
 
 | Name       | Type                                   | Min         | Max        |
-|:-----------|:---------------------------------------|:------------|:-----------|
+| :--------- | :------------------------------------- | :---------- | :--------- |
 | uint8      | unsigned 8-bit integer                 | 0           | 255        |
 | int8       | signed 8-bit integer                   | -128        | 127        |
 | uint16     | unsigned 16-bit integer                | 0           | 65535      |
@@ -737,8 +736,7 @@ A complete VSC file example is given below:
 ```YAML
 ---
 name: comfort
-major_version: 2
-minor_version: 1
+version: 2.1
 description: A collection of interfaces pertaining to cabin comfort.
 
 # Include generic error enumeration to reside directly
@@ -812,10 +810,10 @@ imported from
 ### Key-Object: `namespaces`
 
 |                        |                                                                                                     |
-|:-----------------------|:----------------------------------------------------------------------------------------------------|
+| :--------------------- | :-------------------------------------------------------------------------------------------------- |
 | **Hosted by**          | `namespaces` list, [root element]                                                                   |
 | **Mandatory keys**     | `name`                                                                                              |
-| **Optional keys**      | `description`, `major_version`, `minor_version`                                                     |
+| **Optional keys**      | `description`, `version`                                                                            |
 | **Opt. hosted lists**  | `namespaces`, `includes`, `typedefs`,  `structs`, `enumerations`, `methods`, `events`, `properties` |
 | **Mand. hosted lists** | N/A                                                                                                 |
 
@@ -838,40 +836,39 @@ A namespace example is given below.
 ```YAML
 namespaces:
   - name: seats
-    major_version: 1
-    minor_version: 3
+    version: 1.3
     description: Seat interface and datatypes.
 ```
 
 #### Namespace key-value: `name`
 
-|               |        |
-|:--------------|:-------|
-| **YAML Type** | string |
-| **Mandatory** | Yes    |
-| **Lark grammar**  | `LETTER ("_"\|LETTER\|DIGIT)*` |
+|                  |                                |
+| :--------------- | :----------------------------- |
+| **YAML Type**    | string                         |
+| **Mandatory**    | Yes                            |
+| **Lark grammar** | `LETTER ("_"\|LETTER\|DIGIT)*` |
 
 Specifies the name of the namespace.
 
 #### Namespace key-value: `description`
 
 |                  |               |
-|:-----------------|:--------------|
+| :--------------- | :------------ |
 | **YAML Type**    | string        |
 | **Mandatory**    | No            |
 | **Lark grammar** | [YAML string] |
 
 A description of the namespace.
 
-#### Namespace key-value: `major_version`
+#### Namespace key-value: `version`
 
 |                  |                |
-|:-----------------|:---------------|
-| **YAML Type**    | integer        |
+| :--------------- | :------------- |
+| **YAML Type**    | string         |
 | **Mandatory**    | No             |
-| **Lark grammar** | [YAML integer] |
+| **Lark grammar** | [YAML string] |
 
-Describes the major version of the namespace.
+Describes the major and minor version of the namespace.
 
 Major versions are bumped when an existing data type, method, event,
 or property hosted by the namespace has its signature changed in a non
@@ -880,17 +877,7 @@ backward-compatible way.
 Examples are changed datatypes for an input parameter, an added struct
 member, or changed values in an enumeration option.
 
-#### Namespace key-value: `minor_version`
-
-|                  |                |
-|:-----------------|:---------------|
-| **YAML Type**    | integer        |
-| **Mandatory**    | No             |
-| **Lark grammar** | [YAML integer] |
-
-Describes the minor version of the namespace.
-
-Major versions are bumped when data types, methods, events, or properties are added without impacting
+Minor versions are bumped when data types, methods, events, or properties are added without impacting
 backwards compatibility.
 
 A client expecting version 1.3 of a namespace can still use a version
@@ -902,7 +889,7 @@ changes to the existing objects.
 ### Namespace list object: `typedefs`
 
 |                        |                                          |
-|:-----------------------|:-----------------------------------------|
+| :--------------------- | :--------------------------------------- |
 | **Hosted by**          | `namespaces` list                        |
 | **Mandatory Keys**     | `name`, `datatype`                       |
 | **Optional keys**      | `description`, `min`, `max`, `arraysize` |
@@ -929,7 +916,7 @@ typedefs:
 #### Typedef key-value: `name`
 
 |                  |         |
-|:-----------------|:--------|
+| :--------------- | :------ |
 | **YAML Type**    | string  |
 | **Mandatory**    | Yes     |
 | **Lark grammar** | `CNAME` |
@@ -940,7 +927,7 @@ of the given datatype.
 #### Typedef key-value: `description`
 
 |                  |               |
-|:-----------------|:--------------|
+| :--------------- | :------------ |
 | **YAML Type**    | string        |
 | **Mandatory**    | No            |
 | **Lark grammar** | [YAML string] |
@@ -950,7 +937,7 @@ Contains a description of the defined type.
 #### Typedef key-value: `type`
 
 |                  |             |
-|:-----------------|:------------|
+| :--------------- | :---------- |
 | **YAML Type**    | string      |
 | **Mandatory**    | Yes         |
 | **Lark grammar** | `"typedef"` |
@@ -960,7 +947,7 @@ Specifies that this `datatypes` list object defines a typedef.
 #### Typedef key-value: `datatype`
 
 |                  |                                 |
-|:-----------------|:--------------------------------|
+| :--------------- | :------------------------------ |
 | **YAML Type**    | string                          |
 | **Mandatory**    | Yes                             |
 | **Lark grammar** | `"."? CNAME ("." CNAME)* "[]"?` |
@@ -977,7 +964,7 @@ contain an arbitrary number of elements.
 #### Typedef key-value: `arraysize`
 
 |                  |                    |
-|:-----------------|:-------------------|
+| :--------------- | :----------------- |
 | **YAML Type**    | int                |
 | **Mandatory**    | No                 |
 | **Lark grammar** | [positive integer] |
@@ -990,7 +977,7 @@ This key is only allowed if the `datatype` element specifies an array
 #### Typedef key-value: `min`
 
 |                  |                |
-|:-----------------|:---------------|
+| :--------------- | :------------- |
 | **YAML Type**    | int or decimal |
 | **Mandatory**    | No             |
 | **Lark grammar** | int or decimal |
@@ -1007,7 +994,7 @@ This key is not allowed if the `datatype` specifies an array.
 #### Typedef key-value: `max`
 
 |                  |                |
-|:-----------------|:---------------|
+| :--------------- | :------------- |
 | **YAML Type**    | int or decimal |
 | **Mandatory**    | No             |
 | **Lark grammar** | int or decimal |
@@ -1026,7 +1013,7 @@ This key is not allowed if the `datatype` specifies an array.
 ### Namespace list object: `structs`
 
 |                        |                   |
-|:-----------------------|:------------------|
+| :--------------------- | :---------------- |
 | **Hosted by**          | `namespaces` list |
 | **Mandatory Keys**     | `name`            |
 | **Optional keys**      | `description`     |
@@ -1062,7 +1049,7 @@ structs:
 #### Struct key-value: `name`
 
 |                  |         |
-|:-----------------|:--------|
+| :--------------- | :------ |
 | **YAML Type**    | string  |
 | **Mandatory**    | Yes     |
 | **Lark grammar** | `CNAME` |
@@ -1072,7 +1059,7 @@ Defines the name of the struct
 #### Struct key-value: `description`
 
 |                  |               |
-|:-----------------|:--------------|
+| :--------------- | :------------ |
 | **YAML Type**    | string        |
 | **Mandatory**    | No            |
 | **Lark grammar** | [YAML string] |
@@ -1082,7 +1069,7 @@ Specifies a description of the struct.
 #### Struct list object: `members`
 
 |                    |                       |
-|:-------------------|:----------------------|
+| :----------------- | :-------------------- |
 | **Hosted by**      | `structs` list object |
 | **Mandatory Keys** | `name`, `datatype`    |
 | **Optional keys**  | `description`         |
@@ -1097,7 +1084,7 @@ Please see the `struct` sample code above for an example of how
 ##### Member key-value: `name`
 
 |                  |         |
-|:-----------------|:--------|
+| :--------------- | :------ |
 | **YAML Type**    | string  |
 | **Mandatory**    | Yes     |
 | **Lark grammar** | `CNAME` |
@@ -1107,7 +1094,7 @@ Specifies the name of the struct member.
 ##### Member key-value: `description`
 
 |                  |               |
-|:-----------------|:--------------|
+| :--------------- | :------------ |
 | **YAML Type**    | string        |
 | **Mandatory**    | No            |
 | **Lark grammar** | [YAML string] |
@@ -1117,7 +1104,7 @@ Contains a description of the struct member.
 ##### Member key-value: `datatype`
 
 |                  |                                 |
-|:-----------------|:--------------------------------|
+| :--------------- | :------------------------------ |
 | **YAML Type**    | string                          |
 | **Mandatory**    | Yes                             |
 | **Lark grammar** | `"."? CNAME ("." CNAME)* "[]"?` |
@@ -1138,7 +1125,7 @@ can contain an arbitrary number of elements.
 ##### Member key-value: `arraysize`
 
 |                  |                    |
-|:-----------------|:-------------------|
+| :--------------- | :----------------- |
 | **YAML Type**    | int                |
 | **Mandatory**    | No                 |
 | **Lark grammar** | [positive integer] |
@@ -1153,7 +1140,7 @@ This key is only allowed if the `datatype` element specifies an array
 ### Namespace list object: `enumerations`
 
 |                        |                           |
-|:-----------------------|:--------------------------|
+| :--------------------- | :------------------------ |
 | **Hosted by**          | `namespaces` list         |
 | **Mandatory Keys**     | `name`                    |
 | **Optional keys**      | `description`, `datatype` |
@@ -1192,7 +1179,7 @@ enumerations:
 ### Enumeration key-value: `name`
 
 |                  |         |
-|:-----------------|:--------|
+| :--------------- | :------ |
 | **YAML Type**    | string  |
 | **Mandatory**    | Yes     |
 | **Lark grammar** | `CNAME` |
@@ -1201,10 +1188,10 @@ Defines the name of the enum.
 
 ### Enumeration key-value: `datatype`
 
-|                  |                            |
-|:-----------------|:---------------------------|
-| **YAML Type**    | string                     |
-| **Mandatory**    | No                         |
+|                  |                           |
+| :--------------- | :------------------------ |
+| **YAML Type**    | string                    |
+| **Mandatory**    | No                        |
 | **Lark grammar** | `"."? CNAME ("." CNAME)*` |
 
 Specifies the data type that should be used to host this enum.
@@ -1218,7 +1205,7 @@ local, nested, or externally defined reference.
 ### Enumeration key-value: `description`
 
 |                  |               |
-|:-----------------|:--------------|
+| :--------------- | :------------ |
 | **YAML Type**    | string        |
 | **Mandatory**    | No            |
 | **Lark grammar** | [YAML string] |
@@ -1228,7 +1215,7 @@ Specifies a description of the enum.
 ### Enumeration list object: `options`
 
 |                    |                            |
-|:-------------------|:---------------------------|
+| :----------------- | :------------------------- |
 | **Hosted by**      | `enumerations` list object |
 | **Mandatory Keys** | `name`                     |
 | **Optional keys**  | `description`,`value`      |
@@ -1241,7 +1228,7 @@ Please see the `enumerations` sample code above for an example of how
 #### Options key-value: `name`
 
 |                  |         |
-|:-----------------|:--------|
+| :--------------- | :------ |
 | **YAML Type**    | string  |
 | **Mandatory**    | Yes     |
 | **Lark grammar** | `CNAME` |
@@ -1251,7 +1238,7 @@ Specifies the name of the enum option.
 #### Options key-value: `value`
 
 |                  |                |
-|:-----------------|:---------------|
+| :--------------- | :------------- |
 | **YAML Type**    | int            |
 | **Mandatory**    | Yes            |
 | **Lark grammar** | [YAML integer] |
@@ -1261,7 +1248,7 @@ Specifies the value of the enum option.
 #### Options key-value: `description`
 
 |                  |               |
-|:-----------------|:--------------|
+| :--------------- | :------------ |
 | **YAML Type**    | string        |
 | **Mandatory**    | No            |
 | **Lark grammar** | [YAML string] |
@@ -1273,7 +1260,7 @@ Contains a description of the enum option.
 ## Namespace list Object: `methods`
 
 |                        |                      |
-|:-----------------------|:---------------------|
+| :--------------------- | :------------------- |
 | **Hosted by**          | `namespaces` list    |
 | **Mandatory Keys**     | `name`               |
 | **Optional keys**      | `description`        |
@@ -1316,7 +1303,7 @@ methods:
 ### Methods key-value: `name`
 
 |                  |         |
-|:-----------------|:--------|
+| :--------------- | :------ |
 | **YAML Type**    | string  |
 | **Mandatory**    | Yes     |
 | **Lark grammar** | `CNAME` |
@@ -1326,7 +1313,7 @@ Defines the name of the method.
 ### Methods key-value: `description`
 
 |                  |               |
-|:-----------------|:--------------|
+| :--------------- | :------------ |
 | **YAML Type**    | string        |
 | **Mandatory**    | No            |
 | **Lark grammar** | [YAML string] |
@@ -1336,7 +1323,7 @@ Specifies a description of the method.
 ### Methods list object: `in`
 
 |                    |                                |
-|:-------------------|:-------------------------------|
+| :----------------- | :----------------------------- |
 | **Hosted by**      | `methods` list object          |
 | **Mandatory Keys** | `name`, `datatype`             |
 | **Optional keys**  | `description`,`value`, `range` |
@@ -1349,7 +1336,7 @@ Please see the `methods` sample code above for an example of how
 #### In parameter key-value: `name`
 
 |                  |         |
-|:-----------------|:--------|
+| :--------------- | :------ |
 | **YAML Type**    | string  |
 | **Mandatory**    | Yes     |
 | **Lark grammar** | `CNAME` |
@@ -1359,7 +1346,7 @@ Specifies the name of the input parameter
 #### In parameter key-value: `description`
 
 |                  |               |
-|:-----------------|:--------------|
+| :--------------- | :------------ |
 | **YAML Type**    | string        |
 | **Mandatory**    | No            |
 | **Lark grammar** | [YAML string] |
@@ -1369,7 +1356,7 @@ Contains a description of the input parameter.
 #### In parameter key-value: `datatype`
 
 |                  |                                 |
-|:-----------------|:--------------------------------|
+| :--------------- | :------------------------------ |
 | **YAML Type**    | string                          |
 | **Mandatory**    | Yes                             |
 | **Lark grammar** | `"."? CNAME ("." CNAME)* "[]"?` |
@@ -1390,7 +1377,7 @@ can contain an arbitrary number of elements.
 #### In parameter key-value: `arraysize`
 
 |                  |                    |
-|:-----------------|:-------------------|
+| :--------------- | :----------------- |
 | **YAML Type**    | int                |
 | **Mandatory**    | No                 |
 | **Lark grammar** | [positive integer] |
@@ -1403,7 +1390,7 @@ This key is only allowed if the `datatype` element specifies an array
 #### In parameter key-value: `range`
 
 |                  |                             |
-|:-----------------|:----------------------------|
+| :--------------- | :-------------------------- |
 | **YAML Type**    | string                      |
 | **Mandatory**    | No                          |
 | **Lark grammar** | [See separate grammar file] |
@@ -1416,7 +1403,7 @@ chapter for details on how to specify ranges.
 ### Methods list object: `out`
 
 |                    |                               |
-|:-------------------|:------------------------------|
+| :----------------- | :---------------------------- |
 | **Hosted by**      | `methods` list object         |
 | **Mandatory Keys** | `name`, `datatype`            |
 | **Optional keys**  | `description`,`value`,`range` |
@@ -1429,7 +1416,7 @@ Please see the `methods` sample code above for an example of how
 #### Out parameter key-value: `name`
 
 |                  |         |
-|:-----------------|:--------|
+| :--------------- | :------ |
 | **YAML Type**    | string  |
 | **Mandatory**    | Yes     |
 | **Lark grammar** | `CNAME` |
@@ -1439,7 +1426,7 @@ Specifies the name of the output parameter
 #### Out parameter key-value: `description`
 
 |                  |               |
-|:-----------------|:--------------|
+| :--------------- | :------------ |
 | **YAML Type**    | string        |
 | **Mandatory**    | No            |
 | **Lark grammar** | [YAML string] |
@@ -1449,7 +1436,7 @@ Contains a description of the output parameter.
 #### Out parameter key-value: `datatype`
 
 |                  |                                 |
-|:-----------------|:--------------------------------|
+| :--------------- | :------------------------------ |
 | **YAML Type**    | string                          |
 | **Mandatory**    | Yes                             |
 | **Lark grammar** | `"."? CNAME ("." CNAME)* "[]"?` |
@@ -1470,7 +1457,7 @@ can contain an arbitrary number of elements.
 #### Out parameter key-value: `arraysize`
 
 |                  |                    |
-|:-----------------|:-------------------|
+| :--------------- | :----------------- |
 | **YAML Type**    | int                |
 | **Mandatory**    | No                 |
 | **Lark grammar** | [positive integer] |
@@ -1483,7 +1470,7 @@ This key is only allowed if the `datatype` element specifies an array
 #### Out parameter key-value: `range`
 
 |                  |                             |
-|:-----------------|:----------------------------|
+| :--------------- | :-------------------------- |
 | **YAML Type**    | string                      |
 | **Mandatory**    | No                          |
 | **Lark grammar** | [See separate grammar file] |
@@ -1495,10 +1482,10 @@ chapter for details on how to specify ranges.
 
 ### Methods list object: `error`
 
-|                    |                               |
-|:-------------------|:------------------------------|
-| **Hosted by**      | `methods` list object         |
-| **Mandatory Keys** | `datatype`                    |
+|                    |                                     |
+| :----------------- | :---------------------------------- |
+| **Hosted by**      | `methods` list object               |
+| **Mandatory Keys** | `datatype`                          |
 | **Optional keys**  | `range`, `arraysize`, `description` |
 
 The optional `error` element defines an error value to return. The
@@ -1520,7 +1507,7 @@ reporting, and recovering from network-related errors.
 #### Error parameter key-value: `datatype`
 
 |                  |                                 |
-|:-----------------|:--------------------------------|
+| :--------------- | :------------------------------ |
 | **YAML Type**    | string                          |
 | **Mandatory**    | Yes                             |
 | **Lark grammar** | `"."? CNAME ("." CNAME)* "[]"?` |
@@ -1541,7 +1528,7 @@ can contain an arbitrary number of elements.
 #### Error parameter key-value: `arraysize`
 
 |                  |                    |
-|:-----------------|:-------------------|
+| :--------------- | :----------------- |
 | **YAML Type**    | int                |
 | **Mandatory**    | No                 |
 | **Lark grammar** | [positive integer] |
@@ -1554,7 +1541,7 @@ This key is only allowed if the `datatype` element specifies an array
 #### Error parameter key-value: `range`
 
 |                  |                             |
-|:-----------------|:----------------------------|
+| :--------------- | :-------------------------- |
 | **YAML Type**    | string                      |
 | **Mandatory**    | No                          |
 | **Lark grammar** | [See separate grammar file] |
@@ -1567,7 +1554,7 @@ chapter for details on how to specify ranges.
 ### Error parameter key-value: `description`
 
 |                  |               |
-|:-----------------|:--------------|
+| :--------------- | :------------ |
 | **YAML Type**    | string        |
 | **Mandatory**    | No            |
 | **Lark grammar** | [YAML string] |
@@ -1579,7 +1566,7 @@ Specifies a description of how the errors shall be used.
 ## Namespace list object: `events`
 
 |                        |                   |
-|:-----------------------|:------------------|
+| :--------------------- | :---------------- |
 | **Hosted by**          | `namespaces` list |
 | **Mandatory Keys**     | `name`            |
 | **Optional keys**      | `description`     |
@@ -1621,7 +1608,7 @@ events:
 ### Event key-value: `name`
 
 |                  |         |
-|:-----------------|:--------|
+| :--------------- | :------ |
 | **YAML Type**    | string  |
 | **Mandatory**    | Yes     |
 | **Lark grammar** | `CNAME` |
@@ -1631,7 +1618,7 @@ Defines the name of the event.
 ### Event key-value: `description`
 
 |                  |               |
-|:-----------------|:--------------|
+| :--------------- | :------------ |
 | **YAML Type**    | string        |
 | **Mandatory**    | No            |
 | **Lark grammar** | [YAML string] |
@@ -1641,7 +1628,7 @@ Specifies a description of the event.
 ### Event list object: `in`
 
 |                    |                                |
-|:-------------------|:-------------------------------|
+| :----------------- | :----------------------------- |
 | **Hosted by**      | `methods` list object          |
 | **Mandatory Keys** | `name`, `datatype`             |
 | **Optional keys**  | `description`,`value`, `range` |
@@ -1654,7 +1641,7 @@ Please see the `events` sample code above for an example of how
 #### In parameter key-value: `name`
 
 |                  |         |
-|:-----------------|:--------|
+| :--------------- | :------ |
 | **YAML Type**    | string  |
 | **Mandatory**    | Yes     |
 | **Lark grammar** | `CNAME` |
@@ -1664,7 +1651,7 @@ Specifies the name of the input parameter
 #### In parameter key-value: `description`
 
 |                  |               |
-|:-----------------|:--------------|
+| :--------------- | :------------ |
 | **YAML Type**    | string        |
 | **Mandatory**    | No            |
 | **Lark grammar** | [YAML string] |
@@ -1674,7 +1661,7 @@ Contains a description of the input parameter.
 #### In parameter key-value: `datatype`
 
 |                  |                                 |
-|:-----------------|:--------------------------------|
+| :--------------- | :------------------------------ |
 | **YAML Type**    | string                          |
 | **Mandatory**    | Yes                             |
 | **Lark grammar** | `"."? CNAME ("." CNAME)* "[]"?` |
@@ -1695,7 +1682,7 @@ can contain an arbitrary number of elements.
 #### In parameter key-value: `arraysize`
 
 |                  |                    |
-|:-----------------|:-------------------|
+| :--------------- | :----------------- |
 | **YAML Type**    | int                |
 | **Mandatory**    | No                 |
 | **Lark grammar** | [positive integer] |
@@ -1708,7 +1695,7 @@ This key is only allowed if the `datatype` element specifies an array
 #### In parameter key-value: `range`
 
 |                  |                             |
-|:-----------------|:----------------------------|
+| :--------------- | :-------------------------- |
 | **YAML Type**    | string                      |
 | **Mandatory**    | No                          |
 | **Lark grammar** | [See separate grammar file] |
@@ -1722,11 +1709,11 @@ chapter for details on how to specify ranges.
 
 ## Namespace list object: `properties`
 
-|                        |                            |
-|:-----------------------|:---------------------------|
-| **Hosted by**          | `namespaces` list          |
-| **Mandatory Keys**     | `name`, `datatype` |
-| **Optional keys**      | `description`, `range`     |
+|                    |                        |
+| :----------------- | :--------------------- |
+| **Hosted by**      | `namespaces` list      |
+| **Mandatory Keys** | `name`, `datatype`     |
+| **Optional keys**  | `description`, `range` |
 
 Each `properties` list object specifies a shared state object that can
 be read and set, and which is available to all subscribing entities.
@@ -1764,7 +1751,7 @@ properties:
 ### Property key-value: `name`
 
 |                  |         |
-|:-----------------|:--------|
+| :--------------- | :------ |
 | **YAML Type**    | string  |
 | **Mandatory**    | Yes     |
 | **Lark grammar** | `CNAME` |
@@ -1774,7 +1761,7 @@ Defines the name of the property.
 ### Property key-value: `description`
 
 |                  |               |
-|:-----------------|:--------------|
+| :--------------- | :------------ |
 | **YAML Type**    | string        |
 | **Mandatory**    | No            |
 | **Lark grammar** | [YAML string] |
@@ -1784,7 +1771,7 @@ Specifies a description of the property.
 ### Property key-value: `datatype`
 
 |                  |                                 |
-|:-----------------|:--------------------------------|
+| :--------------- | :------------------------------ |
 | **YAML Type**    | string                          |
 | **Mandatory**    | Yes                             |
 | **Lark grammar** | `"."? CNAME ("." CNAME)* "[]"?` |
@@ -1805,7 +1792,7 @@ can contain an arbitrary number of elements.
 ### Property key-value: `arraysize`
 
 |                  |                    |
-|:-----------------|:-------------------|
+| :--------------- | :----------------- |
 | **YAML Type**    | int                |
 | **Mandatory**    | No                 |
 | **Lark grammar** | [positive integer] |
@@ -1818,7 +1805,7 @@ This key is only allowed if the `datatype` element specifies an array
 ### Property parameter key-value: `range`
 
 |                  |                             |
-|:-----------------|:----------------------------|
+| :--------------- | :-------------------------- |
 | **YAML Type**    | string                      |
 | **Mandatory**    | No                          |
 | **Lark grammar** | [See separate grammar file] |
@@ -1833,7 +1820,7 @@ chapter for details on how to specify ranges.
 ## Namespace list object: `includes`
 
 |                    |                   |
-|:-------------------|:------------------|
+| :----------------- | :---------------- |
 | **Hosted by**      | `namespaces` list |
 | **Mandatory Keys** | `file`            |
 | **Optional keys**  | `description`     |
@@ -1854,8 +1841,7 @@ the `top_level_namespace` namespace that hosts the `includes` list object:
 
 ```YAML
 name: stdvsc
-major_version: 1
-minor_version: 0
+version: 1.0
 description: Standard error codes.
 
 enumerations:
@@ -1919,7 +1905,7 @@ namespaces:
 ### Include key-value: `file`
 
 |                  |               |
-|:-----------------|:--------------|
+| :--------------- | :------------ |
 | **YAML Type**    | string        |
 | **Mandatory**    | Yes           |
 | **Lark grammar** | [YAML string] |
@@ -1929,7 +1915,7 @@ The path to the file to include
 ### Include key-value: `description`
 
 |                  |               |
-|:-----------------|:--------------|
+| :--------------- | :------------ |
 | **YAML Type**    | string        |
 | **Mandatory**    | No            |
 | **Lark grammar** | [YAML string] |

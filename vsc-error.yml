@@ -16,8 +16,7 @@
 # install their entries in the same stdvsc namespace.
 #
 name: stdvsc
-major_version: 1
-minor_version: 0
+version: 1.0
 description: Standard error codes.
 
 enumerations:
