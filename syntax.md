@@ -1,4 +1,4 @@
-# VEHICLE SERVICE CATALOG SYNTAX
+# Vehicle Service Catalog syntax
 
 (C) 2021 - Magnus Feuer
 
@@ -8,13 +8,13 @@ described [here](https://creativecommons.org/licenses/by/4.0/)
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
 **Table of Contents**
 
-- [VEHICLE SERVICE CATALOG SYNTAX](#vehicle-service-catalog-syntax)
-- [FEATURES](#features)
+- [Vehicle Service Catalog syntax](#vehicle-service-catalog-syntax)
+  - [Features](#features)
     - [Features currently not included](#features-currently-not-included)
-- [NAMESPACE VERSIONING](#namespace-versioning)
-- [NATIVE DATA TYPES](#native-data-types)
-- [ARRAYS](#arrays)
-- [VALUE RANGE SPECIFICATION](#value-range-specification)
+  - [Namespace versioning](#namespace-versioning)
+  - [Native Data Types](#native-data-types)
+    - [Arrays](#arrays)
+  - [Value range specification](#value-range-specification)
     - [Using regular expressions](#using-regular-expressions)
     - [Using sets](#using-sets)
     - [Using intervals](#using-intervals)
@@ -22,130 +22,129 @@ described [here](https://creativecommons.org/licenses/by/4.0/)
     - [Range specification for enumerations](#range-specification-for-enumerations)
     - [Range specification for complex types](#range-specification-for-complex-types)
     - [Range specifications for arrays](#range-specifications-for-arrays)
-- [RELATIVE VS. ABSOLUTE DEFINED DATA TYPE REFERENCE](#relative-vs-absolute-defined-data-type-reference)
+  - [Relative and Absolutely defined datatype reference](#relative-and-absolutely-defined-datatype-reference)
     - [Local namespace data type](#local-namespace-data-type)
     - [Nested namespace data type](#nested-namespace-data-type)
     - [External namespace data type](#external-namespace-data-type)
-- [DEPLOYMENT FILES](#deployment-files)
+  - [Deployment files](#deployment-files)
     - [Deployment file overrides](#deployment-file-overrides)
     - [Deployment file object list extensions](#deployment-file-object-list-extensions)
-- [VSC FILE SYNTAX, SEMANTICS AND STRUCTURE](#vsc-file-syntax-semantics-and-structure)
+  - [VSC file syntax, sematics and structure](#vsc-file-syntax-sematics-and-structure)
     - [Key-Object: `namespaces`](#key-object-namespaces)
-        - [Namespace key-value: `name`](#namespace-key-value-name)
-        - [Namespace key-value: `description`](#namespace-key-value-description)
-        - [Namespace key-value: `major-version`](#namespace-key-value-major_version)
-        - [Namespace key-value: `minor-version`](#namespace-key-value-minor_version)
+      - [Namespace key-value: `name`](#namespace-key-value-name)
+      - [Namespace key-value: `description`](#namespace-key-value-description)
+      - [Namespace key-value: `major_version`](#namespace-key-value-major_version)
+      - [Namespace key-value: `minor_version`](#namespace-key-value-minor_version)
     - [Namespace list object: `typedefs`](#namespace-list-object-typedefs)
-        - [Typedef key-value: `name`](#typedef-key-value-name)
-        - [Typedef key-value: `description`](#typedef-key-value-description)
-        - [Typedef key-value: `type`](#typedef-key-value-type)
-        - [Typedef key-value: `datatype`](#typedef-key-value-datatype)
-        - [Typedef key-value: `arraysize`](#typedef-key-value-arraysize)
-        - [Typedef key-value: `min`](#typedef-key-value-min)
-        - [Typedef key-value: `max`](#typedef-key-value-max)
+      - [Typedef key-value: `name`](#typedef-key-value-name)
+      - [Typedef key-value: `description`](#typedef-key-value-description)
+      - [Typedef key-value: `type`](#typedef-key-value-type)
+      - [Typedef key-value: `datatype`](#typedef-key-value-datatype)
+      - [Typedef key-value: `arraysize`](#typedef-key-value-arraysize)
+      - [Typedef key-value: `min`](#typedef-key-value-min)
+      - [Typedef key-value: `max`](#typedef-key-value-max)
     - [Namespace list object: `structs`](#namespace-list-object-structs)
-        - [Struct key-value: `name`](#struct-key-value-name)
-        - [Struct key-value: `description`](#struct-key-value-description)
-        - [Struct list object: `members`](#struct-list-object-members)
-            - [Member key-value: `name`](#member-key-value-name)
-            - [Member key-value: `description`](#member-key-value-description)
-            - [Member key-value: `datatype`](#member-key-value-datatype)
-            - [Member key-value: `arraysize`](#member-key-value-arraysize)
+      - [Struct key-value: `name`](#struct-key-value-name)
+      - [Struct key-value: `description`](#struct-key-value-description)
+      - [Struct list object: `members`](#struct-list-object-members)
+        - [Member key-value: `name`](#member-key-value-name)
+        - [Member key-value: `description`](#member-key-value-description)
+        - [Member key-value: `datatype`](#member-key-value-datatype)
+        - [Member key-value: `arraysize`](#member-key-value-arraysize)
     - [Namespace list object: `enumerations`](#namespace-list-object-enumerations)
-        - [Enumeration key-value: `name`](#enumeration-key-value-name)
-        - [Enumeration key-value: `datatype`](#enumeration-key-value-datatype)
-        - [Enumeration key-value: `description`](#enumeration-key-value-description)
-        - [Enumeration list object: `options`](#enumeration-list-object-options)
-            - [Options key-value: `name`](#options-key-value-name)
-            - [Options key-value: `value`](#options-key-value-value)
-            - [Options key-value: `description`](#options-key-value-description)
-    - [Namespace list Object: `methods`](#namespace-list-object-methods)
-        - [Methods key-value: `name`](#methods-key-value-name)
-        - [Methods key-value: `description`](#methods-key-value-description)
-        - [Methods list object: `in`](#methods-list-object-in)
-            - [In parameter key-value: `name`](#in-parameter-key-value-name)
-            - [In parameter key-value: `description`](#in-parameter-key-value-description)
-            - [In parameter key-value: `datatype`](#in-parameter-key-value-datatype)
-            - [In parameter key-value: `arraysize`](#in-parameter-key-value-arraysize)
-            - [In parameter key-value: `range`](#in-parameter-key-value-range)
-        - [Methods list object: `out`](#methods-list-object-out)
-            - [Out parameter key-value: `name`](#out-parameter-key-value-name)
-            - [Out parameter key-value: `description`](#out-parameter-key-value-description)
-            - [Out parameter key-value: `datatype`](#out-parameter-key-value-datatype)
-            - [Out parameter key-value: `arraysize`](#out-parameter-key-value-arraysize)
-            - [Out parameter key-value: `range`](#out-parameter-key-value-range)
-        - [Methods list object: `error`](#methods-list-object-error)
-            - [Error parameter key-value: `description`](#error-parameter-key-value-description)
-            - [Error parameter key-value: `datatype`](#error-parameter-key-value-datatype)
-            - [Error parameter key-value: `arraysize`](#error-parameter-key-value-arraysize)
-            - [Error parameter key-value: `range`](#error-parameter-key-value-range)
-    - [Namespace list object: `events`](#namespace-list-object-events)
-        - [Event key-value: `name`](#event-key-value-name)
-        - [Event key-value: `description`](#event-key-value-description)
-        - [Event list object: `in`](#event-list-object-in)
-            - [In parameter key-value: `name`](#in-parameter-key-value-name-1)
-            - [In parameter key-value: `description`](#in-parameter-key-value-description-1)
-            - [In parameter key-value: `datatype`](#in-parameter-key-value-datatype-1)
-            - [In parameter key-value: `arraysize`](#in-parameter-key-value-arraysize-1)
-            - [In parameter key-value: `range`](#in-parameter-key-value-range-1)
-    - [Namespace list object: `properties`](#namespace-list-object-properties)
-        - [Property key-value: `name`](#property-key-value-name)
-        - [Property key-value: `description`](#property-key-value-description)
-        - [Property key-value: `datatype`](#property-key-value-datatype)
-        - [Property key-value: `arraysize`](#property-key-value-arraysize)
-        - [Property parameter key-value: `range`](#property-parameter-key-value-range)
-    - [Namespace list object: `includes`](#namespace-list-object-includes)
-        - [Include key-value: `file`](#include-key-value-file)
-        - [Include key-value: `description`](#include-key-value-description)
+    - [Enumeration key-value: `name`](#enumeration-key-value-name)
+    - [Enumeration key-value: `datatype`](#enumeration-key-value-datatype)
+    - [Enumeration key-value: `description`](#enumeration-key-value-description)
+    - [Enumeration list object: `options`](#enumeration-list-object-options)
+      - [Options key-value: `name`](#options-key-value-name)
+      - [Options key-value: `value`](#options-key-value-value)
+      - [Options key-value: `description`](#options-key-value-description)
+  - [Namespace list Object: `methods`](#namespace-list-object-methods)
+    - [Methods key-value: `name`](#methods-key-value-name)
+    - [Methods key-value: `description`](#methods-key-value-description)
+    - [Methods list object: `in`](#methods-list-object-in)
+      - [In parameter key-value: `name`](#in-parameter-key-value-name)
+      - [In parameter key-value: `description`](#in-parameter-key-value-description)
+      - [In parameter key-value: `datatype`](#in-parameter-key-value-datatype)
+      - [In parameter key-value: `arraysize`](#in-parameter-key-value-arraysize)
+      - [In parameter key-value: `range`](#in-parameter-key-value-range)
+    - [Methods list object: `out`](#methods-list-object-out)
+      - [Out parameter key-value: `name`](#out-parameter-key-value-name)
+      - [Out parameter key-value: `description`](#out-parameter-key-value-description)
+      - [Out parameter key-value: `datatype`](#out-parameter-key-value-datatype)
+      - [Out parameter key-value: `arraysize`](#out-parameter-key-value-arraysize)
+      - [Out parameter key-value: `range`](#out-parameter-key-value-range)
+    - [Methods list object: `error`](#methods-list-object-error)
+      - [Error parameter key-value: `datatype`](#error-parameter-key-value-datatype)
+      - [Error parameter key-value: `arraysize`](#error-parameter-key-value-arraysize)
+      - [Error parameter key-value: `range`](#error-parameter-key-value-range)
+    - [Error parameter key-value: `description`](#error-parameter-key-value-description)
+  - [Namespace list object: `events`](#namespace-list-object-events)
+    - [Event key-value: `name`](#event-key-value-name)
+    - [Event key-value: `description`](#event-key-value-description)
+    - [Event list object: `in`](#event-list-object-in)
+      - [In parameter key-value: `name`](#in-parameter-key-value-name-1)
+      - [In parameter key-value: `description`](#in-parameter-key-value-description-1)
+      - [In parameter key-value: `datatype`](#in-parameter-key-value-datatype-1)
+      - [In parameter key-value: `arraysize`](#in-parameter-key-value-arraysize-1)
+      - [In parameter key-value: `range`](#in-parameter-key-value-range-1)
+  - [Namespace list object: `properties`](#namespace-list-object-properties)
+    - [Property key-value: `name`](#property-key-value-name)
+    - [Property key-value: `description`](#property-key-value-description)
+    - [Property key-value: `datatype`](#property-key-value-datatype)
+    - [Property key-value: `arraysize`](#property-key-value-arraysize)
+    - [Property parameter key-value: `range`](#property-parameter-key-value-range)
+  - [Namespace list object: `includes`](#namespace-list-object-includes)
+    - [Include key-value: `file`](#include-key-value-file)
+    - [Include key-value: `description`](#include-key-value-description)
 
 <!-- markdown-toc end -->
-
 
 This document describes the structure of the Vehicle Service Catalog
 (VSC) YAML file.
 
 ------------------
 
-# FEATURES
+## Features
+
 The format supports the following features
 
-* **Namespaces**  
+- **Namespaces**  
   Logical grouping of methods, events, properties, and defined data types that can be nested.
 
-* **Methods**  
+- **Methods**  
   A call, executed by a single server instance, that optionally returns a value.
   Execution is guaranteed to TCP level with server failure being reported.
   
-* **Events**  
+- **Events**  
   A fire-and-forget call, executed by zero or more subscribing instances, that does not return a value.
   Execution is best effort to UDP level with server failures not being reported.
 
-* **Defined data types**  
+- **Defined data types**  
   Named data types that can be enumerations, (nested) structs or typedefs.
   
-* **Properties**  
+- **Properties**  
   A shared state object that can be read and set, and which is
   available to all subscribing entities. Compared with a signal (see
   below), a property can be viewed as a level trigger while a signal
   is an edge trigger.
 
-* **Deployment files**  
+- **Deployment files**  
   Adds deployment-specific data to a VSC file.
   
-## Features currently not included
+### Features currently not included
 
 The following features are yet to be determined:
 
-* **Signals**  
+- **Signals**  
   These are semantically equivalent to single-argument events. We need to decide
   how we want to integrate VSS signals.
   
-* **More?**
+- **More?**
 
+-------------------
 
---------------------
-
-# NAMESPACE VERSIONING
+## Namespace versioning
 
 VSC namespaces can optionally have a major and minor version,
 specified by `major_version` and `minor_version` keys.
@@ -173,7 +172,7 @@ required.
 
 -------------------
 
-# NATIVE DATA TYPES
+## Native Data Types
 
 The following native data types are available as properties, in/out
 arguments, enumeration types, and struct members.
@@ -198,7 +197,7 @@ arguments, enumeration types, and struct members.
 
 -------------
 
-# ARRAYS
+### Arrays
 
 Besides the datatypes described above, VSS supports as well the concept of
 `arrays`, as a *collection of elements based on the data entry
@@ -217,7 +216,8 @@ arraysize: 5
 Only single-dimensional arrays are supported.
 
 ---------------
-# VALUE RANGE SPECIFICATION
+
+## Value range specification
 
 Methods, events, and properties can optionally specify a range of
 legal value that their `in`, `out`, `error` and property can take.
@@ -240,7 +240,6 @@ The `$` operand is the value being verified.
 
 String values are double quoted (`"`). Double quotes within a string are expressed as two double quotes (`""`).
 
-
 `$ == 10 or $ == 20`
 
 `$ in_set (1,3,4,5)`
@@ -255,7 +254,7 @@ String values are double quoted (`"`). Double quotes within a string are express
 
 If the expression evaluates to true, the value is considered legal
 
-## Using regular expressions
+### Using regular expressions
 
 A range expression can use regular expressions to match against value patterns.
 
@@ -264,8 +263,7 @@ A range expression can use regular expressions to match against value patterns.
 Examples of legal values in this case would be `the_first_value`,
 `the_second_value`, `a_1234_value`, `something_else`.
 
-
-## Using sets
+### Using sets
 
 A range expression can have a set:
 
@@ -284,7 +282,7 @@ A set can be floats:
 
 `$ in_set (999.99, 11.2, 848222.442)`
 
-## Using intervals
+### Using intervals
 
 A range expression can have an interval:
 
@@ -302,7 +300,7 @@ An inteval can be floats:
 
 `$ in_interval (-1.0, 1.0)`
 
-## Range specification for native types
+### Range specification for native types
 
 In its simplest form, a value range is specified as simple native data
 type comparisons relations, as shown below.
@@ -320,15 +318,12 @@ methods:
         range: $ == "hello" or $ == "world"
 ```
 
-
 If the range expression, with `$` substituted by the value to verify, evaluates to true, then the value is legal.
 
-
-## Range specification for enumerations
+### Range specification for enumerations
 
 Parameters, errors, and properties that have an enum value specify
 their range using the the symbolic values, as shown below:
-
 
 ```YAML
 enumerations:
@@ -354,8 +349,7 @@ methods:
       range: $ == "ok" or $ == "in_progress"
 ```
 
-
-## Range specification for complex types
+### Range specification for complex types
 
 Complex (struct) values specify their ranges using member specification after the `$` token, as shown below
 
@@ -411,12 +405,10 @@ methods:
               $.an_inner_struct.inner_struct_value_2 == 123456789 )
 ```
 
-
-## Range specifications for arrays
+### Range specifications for arrays
 
 Range specifications for arrays are defined by adding an index
 (starting with `0`) to the `$` token, as shown below:
-
 
 ```YAML
 methods:
@@ -433,11 +425,9 @@ the tested value will render the expression false. This is especially
 important for unbound arrays where the value can host any number of
 elements.
 
-
 If the value is of a complex type where the type's members are arrays,
 a combination of member names and array indices can be used, as shown
 below:
-
 
 ```YAML
 structs:
@@ -459,11 +449,9 @@ methods:
         range:  $.array_member_1[0] >= 0 and $.array_member_2[4] != "a value"
 ```
 
-
 ---------------
 
-
-# RELATIVE VS. ABSOLUTE DEFINED DATA TYPE REFERENCE
+## Relative and Absolutely defined datatype reference
 
 A defined data type, specified in a `typedefs`, `structs`, or
 `enumerations` list object, can be referenced by other entities such
@@ -472,21 +460,21 @@ enumerator), methods and event parameters, and properties.
 
 These references can be of three different kinds:
 
-* **Local namespace data type**  
+- **Local namespace data type**  
 The data type lives in the same namespace as the entity using it.
 
-* **Nested namespace data type**  
+- **Nested namespace data type**  
 The data type lives in a namespace nested under the namespace of the
 entity using the type.
 
-* **External namespace data type**  
+- **External namespace data type**  
 The data type lives in a namespace outside the namespace of the
 entity using the type.
 
-## Local namespace data type
+### Local namespace data type
+
 In this case the data type is defined in the same namespace as the entity
 using it, as shown below
-
 
 ```YAML
 namespaces:
@@ -509,10 +497,10 @@ Since both `my_method` and `my_typedef` is defined in the same
 namespace (`my_namespace`), the reference to the defined type can
 simply be the type name.
 
-##  Nested namespace data type
+### Nested namespace data type
+
 In this case the data type is defined in a another namespace that resides under
 the namespace of the entity using the type, as shown below
-
 
 ```YAML
 namespaces:
@@ -547,11 +535,11 @@ prefixing its name with a period-separated namespace path to `my_typedef`:
 
 This syntax allows any defined data type of any nested namespace to be referenced.
 
-##  External namespace data type
+### External namespace data type
+
 In this case the data type is defined in a another namespace that
 resides under the namespace of the entity using the type, as shown
 below:
-
 
 ```YAML
 namespaces:
@@ -578,13 +566,15 @@ This is resolved by specifying an absolute path to the defined
 datatype, which is identical to a a nested namespace path
 apart from being prefixed with a period:
 
+```YAML
     datatype: .external_namespace.nested_namespace.my_typedef
-    
+```
+
 This syntax allows any defined data type anywhere in the tree to be used.
 
 -----------------------
 
-# DEPLOYMENT FILES
+## Deployment files
 
 Deployment files contains VSC file extensions to be applied when the
 VSC file is processed.  An example of deployment file data is a DBUS
@@ -598,8 +588,8 @@ such as network protocols and topology.
 An example of a VSC file sample and a deployment file extension to
 that sample is given below:
 
-
 **File: `comfort-service.yml`**  
+
 ```YAML
 name: comfort
 namespaces:
@@ -640,13 +630,15 @@ example above, the `dbus_interface` key-value pair can only be added
 in a deployment file since `dbus_interface` is not a part of the
 regular VSC file syntax.
 
-## Deployment file overrides
+### Deployment file overrides
+
 If a deployment file key-value element is also defined in the VSC
 file, the deployment file's value will be used.
 
 Example:
 
 **File: `comfort-service.yml`**  
+
 ```YAML
 name: comfort
   typedefs:
@@ -658,6 +650,7 @@ name: comfort
 ```
 
 **File: `redefine-movement-type.yml`**  
+
 ```YAML
 name: comfort
   typedefs:
@@ -677,7 +670,7 @@ name: comfort
       description: The movement of a seat component
 ```
 
-## Deployment file object list extensions
+### Deployment file object list extensions
 
 If a deployment file's object list element (e.g. `events`) is also
 defined in the VSC file, the VSC's list will traversed recursively and
@@ -688,6 +681,7 @@ extended by the deployment file's corresponding list.
 Example:
 
 **File: `comfort-service.yml`**  
+
 ```YAML
 name: comfort
 events:
@@ -702,6 +696,7 @@ events:
 ```
 
 **File: `add_seat_moving_in_parameter.yml`**  
+
 ```YAML
 name: comfort
 events:
@@ -729,7 +724,7 @@ events:
 
 ----------
 
-# VSC FILE SYNTAX, SEMANTICS AND STRUCTURE
+## VSC file syntax, sematics and structure
 
 A Vehicle Service Catalog is stored in one or more YAML files.  The
 root of each YAML file is assumed to be a `namespace` object and needs
@@ -805,7 +800,6 @@ namespaces:
         datatype: uint8
 ```
 
-
 The following chapters specifies all YAML objects and their keys
 supported by VSC.  The "Lark grammar" specification refers to the Lark
 grammar that can be found [here](https://github.com/lark-parser/lark).
@@ -813,10 +807,9 @@ The terminals used in the grammar (`LETTER`, `DIGIT`, etc) are
 imported from
 [common.lark](https://github.com/lark-parser/lark/blob/master/lark/grammars/common.lark)
 
-
 -----------------
 
-## Key-Object: `namespaces`
+### Key-Object: `namespaces`
 
 |                        |                                                                                                     |
 |:-----------------------|:----------------------------------------------------------------------------------------------------|
@@ -850,7 +843,8 @@ namespaces:
     description: Seat interface and datatypes.
 ```
 
-### Namespace key-value: `name`
+#### Namespace key-value: `name`
+
 |               |        |
 |:--------------|:-------|
 | **YAML Type** | string |
@@ -859,7 +853,8 @@ namespaces:
 
 Specifies the name of the namespace.
 
-### Namespace key-value: `description`
+#### Namespace key-value: `description`
+
 |                  |               |
 |:-----------------|:--------------|
 | **YAML Type**    | string        |
@@ -868,7 +863,8 @@ Specifies the name of the namespace.
 
 A description of the namespace.
 
-### Namespace key-value: `major_version`
+#### Namespace key-value: `major_version`
+
 |                  |                |
 |:-----------------|:---------------|
 | **YAML Type**    | integer        |
@@ -884,7 +880,8 @@ backward-compatible way.
 Examples are changed datatypes for an input parameter, an added struct
 member, or changed values in an enumeration option.
 
-### Namespace key-value: `minor_version`
+#### Namespace key-value: `minor_version`
+
 |                  |                |
 |:-----------------|:---------------|
 | **YAML Type**    | integer        |
@@ -902,8 +899,8 @@ changes to the existing objects.
 
 -----------------
 
+### Namespace list object: `typedefs`
 
-## Namespace list object: `typedefs`
 |                        |                                          |
 |:-----------------------|:-----------------------------------------|
 | **Hosted by**          | `namespaces` list                        |
@@ -929,7 +926,8 @@ typedefs:
     description: The movement of a seat component
 ```
 
-### Typedef key-value: `name`
+#### Typedef key-value: `name`
+
 |                  |         |
 |:-----------------|:--------|
 | **YAML Type**    | string  |
@@ -939,8 +937,8 @@ typedefs:
 Specifies the name of the typedef. This name can be used as an alias
 of the given datatype.
 
+#### Typedef key-value: `description`
 
-### Typedef key-value: `description`
 |                  |               |
 |:-----------------|:--------------|
 | **YAML Type**    | string        |
@@ -949,19 +947,18 @@ of the given datatype.
 
 Contains a description of the defined type.
 
+#### Typedef key-value: `type`
 
-
-### Typedef key-value: `type`
 |                  |             |
 |:-----------------|:------------|
 | **YAML Type**    | string      |
 | **Mandatory**    | Yes         |
 | **Lark grammar** | `"typedef"` |
 
-Specifies that this `datatypes` list object defines a typedef. 
+Specifies that this `datatypes` list object defines a typedef.
 
+#### Typedef key-value: `datatype`
 
-### Typedef key-value: `datatype`
 |                  |                                 |
 |:-----------------|:--------------------------------|
 | **YAML Type**    | string                          |
@@ -977,7 +974,8 @@ array.
 If `arraysize` is not specified for an array type, the array can
 contain an arbitrary number of elements.
 
-###  Typedef key-value: `arraysize`
+#### Typedef key-value: `arraysize`
+
 |                  |                    |
 |:-----------------|:-------------------|
 | **YAML Type**    | int                |
@@ -989,8 +987,8 @@ Specifies the number of elements in the array.
 This key is only allowed if the `datatype` element specifies an array
 (ending with `[]`).
 
+#### Typedef key-value: `min`
 
-### Typedef key-value: `min`
 |                  |                |
 |:-----------------|:---------------|
 | **YAML Type**    | int or decimal |
@@ -1003,11 +1001,11 @@ This key can only be specified if `datatype` is set to `int8`,
 `uint8`, `int16`, `uint16`, `int32`, `uint32`, `int64`, `uint64`,
 `float`, or `double`.
 
-This key can only be specified 
+This key can only be specified
 This key is not allowed if the `datatype` specifies an array.
 
+#### Typedef key-value: `max`
 
-### Typedef key-value: `max`
 |                  |                |
 |:-----------------|:---------------|
 | **YAML Type**    | int or decimal |
@@ -1020,12 +1018,12 @@ This key can only be specified if `datatype` is set to `int8`,
 `uint8`, `int16`, `uint16`, `int32`, `uint32`, `int64`, `uint64`,
 `float`, or `double`.
 
-This key can only be specified 
+This key can only be specified
 This key is not allowed if the `datatype` specifies an array.
 
 ------------------------
 
-## Namespace list object: `structs`
+### Namespace list object: `structs`
 
 |                        |                   |
 |:-----------------------|:------------------|
@@ -1034,7 +1032,6 @@ This key is not allowed if the `datatype` specifies an array.
 | **Optional keys**      | `description`     |
 | **Mand. hosted lists** | `members`         |
 | **Opt. hosted lists**  | N/A               |
-
 
 Each `structs` list object specifies an aggregated data type.
 
@@ -1062,7 +1059,8 @@ structs:
         description: The position of the lumbar support
 ```
 
-### Struct key-value: `name`
+#### Struct key-value: `name`
+
 |                  |         |
 |:-----------------|:--------|
 | **YAML Type**    | string  |
@@ -1071,8 +1069,8 @@ structs:
 
 Defines the name of the struct
 
+#### Struct key-value: `description`
 
-### Struct key-value: `description`
 |                  |               |
 |:-----------------|:--------------|
 | **YAML Type**    | string        |
@@ -1081,8 +1079,8 @@ Defines the name of the struct
 
 Specifies a description of the struct.
 
+#### Struct list object: `members`
 
-### Struct list object: `members`
 |                    |                       |
 |:-------------------|:----------------------|
 | **Hosted by**      | `structs` list object |
@@ -1093,10 +1091,11 @@ Each `members` list object defines an additional member of the struct.
 
 Each member can be of a native or defined datatype.
 
-Please see the `struct` sample code above for an example of how 
+Please see the `struct` sample code above for an example of how
 `members` list objects are used.
 
-#### Member key-value: `name`
+##### Member key-value: `name`
+
 |                  |         |
 |:-----------------|:--------|
 | **YAML Type**    | string  |
@@ -1105,8 +1104,8 @@ Please see the `struct` sample code above for an example of how
 
 Specifies the name of the struct member.
 
+##### Member key-value: `description`
 
-#### Member key-value: `description`
 |                  |               |
 |:-----------------|:--------------|
 | **YAML Type**    | string        |
@@ -1115,15 +1114,15 @@ Specifies the name of the struct member.
 
 Contains a description of the struct member.
 
+##### Member key-value: `datatype`
 
-#### Member key-value: `datatype`
 |                  |                                 |
 |:-----------------|:--------------------------------|
 | **YAML Type**    | string                          |
 | **Mandatory**    | Yes                             |
 | **Lark grammar** | `"."? CNAME ("." CNAME)* "[]"?` |
 
-Specifies the data type of the struct member. 
+Specifies the data type of the struct member.
 
 The type can be either a native or defined type.
 
@@ -1136,7 +1135,8 @@ optionally be provided to specify the number of elements in the array.
 If `arraysize` is not specified for an array type, the member array
 can contain an arbitrary number of elements.
 
-#### Member key-value: `arraysize`
+##### Member key-value: `arraysize`
+
 |                  |                    |
 |:-----------------|:-------------------|
 | **YAML Type**    | int                |
@@ -1150,7 +1150,7 @@ This key is only allowed if the `datatype` element specifies an array
 
 ----------------------
 
-## Namespace list object: `enumerations`
+### Namespace list object: `enumerations`
 
 |                        |                           |
 |:-----------------------|:--------------------------|
@@ -1190,6 +1190,7 @@ enumerations:
 ```
 
 ### Enumeration key-value: `name`
+
 |                  |         |
 |:-----------------|:--------|
 | **YAML Type**    | string  |
@@ -1199,13 +1200,14 @@ enumerations:
 Defines the name of the enum.
 
 ### Enumeration key-value: `datatype`
+
 |                  |                            |
 |:-----------------|:---------------------------|
 | **YAML Type**    | string                     |
 | **Mandatory**    | No                         |
-| **Lark grammar** | `"."? CNAME ("." CNAME)* ` |
+| **Lark grammar** | `"."? CNAME ("." CNAME)*` |
 
-Specifies the data type that should be used to host this enum. 
+Specifies the data type that should be used to host this enum.
 
 The type can be either a native or defined type, but must resolve
 to a native integer type.
@@ -1213,8 +1215,8 @@ to a native integer type.
 If `datatype` refers to a defined type, this type can be a
 local, nested, or externally defined reference.
 
-
 ### Enumeration key-value: `description`
+
 |                  |               |
 |:-----------------|:--------------|
 | **YAML Type**    | string        |
@@ -1224,6 +1226,7 @@ local, nested, or externally defined reference.
 Specifies a description of the enum.
 
 ### Enumeration list object: `options`
+
 |                    |                            |
 |:-------------------|:---------------------------|
 | **Hosted by**      | `enumerations` list object |
@@ -1232,10 +1235,11 @@ Specifies a description of the enum.
 
 Each `options` list object adds an option to the enumerator.
 
-Please see the `enumerations` sample code above for an example of how 
+Please see the `enumerations` sample code above for an example of how
 `options` list objects are used.
 
 #### Options key-value: `name`
+
 |                  |         |
 |:-----------------|:--------|
 | **YAML Type**    | string  |
@@ -1245,6 +1249,7 @@ Please see the `enumerations` sample code above for an example of how
 Specifies the name of the enum option.
 
 #### Options key-value: `value`
+
 |                  |                |
 |:-----------------|:---------------|
 | **YAML Type**    | int            |
@@ -1253,8 +1258,8 @@ Specifies the name of the enum option.
 
 Specifies the value of the enum option.
 
-
 #### Options key-value: `description`
+
 |                  |               |
 |:-----------------|:--------------|
 | **YAML Type**    | string        |
@@ -1266,6 +1271,7 @@ Contains a description of the enum option.
 ----------------------
 
 ## Namespace list Object: `methods`
+
 |                        |                      |
 |:-----------------------|:---------------------|
 | **Hosted by**          | `namespaces` list    |
@@ -1275,7 +1281,7 @@ Contains a description of the enum option.
 | **Opt. hosted lists**  | `in`, `out`, `error` |
 
 Each `methods` list object specifies a method call, executed by a
-single server instance, that optionally returns a value. 
+single server instance, that optionally returns a value.
 Execution is guaranteed to TCP level with server failure being reported.
 
 A `methods` sample list object is given below:
@@ -1308,6 +1314,7 @@ methods:
 ```
 
 ### Methods key-value: `name`
+
 |                  |         |
 |:-----------------|:--------|
 | **YAML Type**    | string  |
@@ -1317,6 +1324,7 @@ methods:
 Defines the name of the method.
 
 ### Methods key-value: `description`
+
 |                  |               |
 |:-----------------|:--------------|
 | **YAML Type**    | string        |
@@ -1326,6 +1334,7 @@ Defines the name of the method.
 Specifies a description of the method.
 
 ### Methods list object: `in`
+
 |                    |                                |
 |:-------------------|:-------------------------------|
 | **Hosted by**      | `methods` list object          |
@@ -1334,11 +1343,11 @@ Specifies a description of the method.
 
 Each `in` list object defines an input parameter to the method
 
-Please see the `methods` sample code above for an example of how 
+Please see the `methods` sample code above for an example of how
 `in` parameter lists are used
 
-
 #### In parameter key-value: `name`
+
 |                  |         |
 |:-----------------|:--------|
 | **YAML Type**    | string  |
@@ -1347,8 +1356,8 @@ Please see the `methods` sample code above for an example of how
 
 Specifies the name of the input parameter
 
-
 #### In parameter key-value: `description`
+
 |                  |               |
 |:-----------------|:--------------|
 | **YAML Type**    | string        |
@@ -1358,6 +1367,7 @@ Specifies the name of the input parameter
 Contains a description of the input parameter.
 
 #### In parameter key-value: `datatype`
+
 |                  |                                 |
 |:-----------------|:--------------------------------|
 | **YAML Type**    | string                          |
@@ -1378,6 +1388,7 @@ If `arraysize` is not specified for an array type, the member array
 can contain an arbitrary number of elements.
 
 #### In parameter key-value: `arraysize`
+
 |                  |                    |
 |:-----------------|:-------------------|
 | **YAML Type**    | int                |
@@ -1390,20 +1401,20 @@ This key is only allowed if the `datatype` element specifies an array
 (ending with `[]`).
 
 #### In parameter key-value: `range`
+
 |                  |                             |
 |:-----------------|:----------------------------|
 | **YAML Type**    | string                      |
 | **Mandatory**    | No                          |
 | **Lark grammar** | [See separate grammar file] |
 
-
 Specifies the legal range for the value.
 
 Please see [value range specification](#value-range-specification)
 chapter for details on how to specify ranges.
 
-
 ### Methods list object: `out`
+
 |                    |                               |
 |:-------------------|:------------------------------|
 | **Hosted by**      | `methods` list object         |
@@ -1412,10 +1423,11 @@ chapter for details on how to specify ranges.
 
 Each `out` list object defines an output parameter to the method
 
-Please see the `methods` sample code above for an example of how 
+Please see the `methods` sample code above for an example of how
 `out` parameter lists are used
 
 #### Out parameter key-value: `name`
+
 |                  |         |
 |:-----------------|:--------|
 | **YAML Type**    | string  |
@@ -1425,6 +1437,7 @@ Please see the `methods` sample code above for an example of how
 Specifies the name of the output parameter
 
 #### Out parameter key-value: `description`
+
 |                  |               |
 |:-----------------|:--------------|
 | **YAML Type**    | string        |
@@ -1434,6 +1447,7 @@ Specifies the name of the output parameter
 Contains a description of the output parameter.
 
 #### Out parameter key-value: `datatype`
+
 |                  |                                 |
 |:-----------------|:--------------------------------|
 | **YAML Type**    | string                          |
@@ -1454,6 +1468,7 @@ If `arraysize` is not specified for an array type, the member array
 can contain an arbitrary number of elements.
 
 #### Out parameter key-value: `arraysize`
+
 |                  |                    |
 |:-----------------|:-------------------|
 | **YAML Type**    | int                |
@@ -1465,28 +1480,26 @@ Specifies the number of elements in the output parameter array.
 This key is only allowed if the `datatype` element specifies an array
 (ending with `[]`).
 
-
 #### Out parameter key-value: `range`
+
 |                  |                             |
 |:-----------------|:----------------------------|
 | **YAML Type**    | string                      |
 | **Mandatory**    | No                          |
 | **Lark grammar** | [See separate grammar file] |
 
-
 Specifies the legal range for the value.
 
 Please see [value range specification](#value-range-specification)
 chapter for details on how to specify ranges.
 
-
 ### Methods list object: `error`
+
 |                    |                               |
 |:-------------------|:------------------------------|
 | **Hosted by**      | `methods` list object         |
 | **Mandatory Keys** | `datatype`                    |
 | **Optional keys**  | `range`, `arraysize`, `description` |
-
 
 The optional `error` element defines an error value to return. The
 `error` element is returned in addition to any `out` elements
@@ -1505,6 +1518,7 @@ where each langauage library implements their own way of detecting,
 reporting, and recovering from network-related errors.
 
 #### Error parameter key-value: `datatype`
+
 |                  |                                 |
 |:-----------------|:--------------------------------|
 | **YAML Type**    | string                          |
@@ -1524,8 +1538,8 @@ optionally be provided to specify the number of elements in the array.
 If `arraysize` is not specified for an array type, the member array
 can contain an arbitrary number of elements.
 
-
 #### Error parameter key-value: `arraysize`
+
 |                  |                    |
 |:-----------------|:-------------------|
 | **YAML Type**    | int                |
@@ -1538,20 +1552,20 @@ This key is only allowed if the `datatype` element specifies an array
 (ending with `[]`).
 
 #### Error parameter key-value: `range`
+
 |                  |                             |
 |:-----------------|:----------------------------|
 | **YAML Type**    | string                      |
 | **Mandatory**    | No                          |
 | **Lark grammar** | [See separate grammar file] |
 
-
 Specifies the legal range for the value.
 
 Please see [value range specification](#value-range-specification)
 chapter for details on how to specify ranges.
 
-
 ### Error parameter key-value: `description`
+
 |                  |               |
 |:-----------------|:--------------|
 | **YAML Type**    | string        |
@@ -1563,6 +1577,7 @@ Specifies a description of how the errors shall be used.
 ----------------------
 
 ## Namespace list object: `events`
+
 |                        |                   |
 |:-----------------------|:------------------|
 | **Hosted by**          | `namespaces` list |
@@ -1604,6 +1619,7 @@ events:
 ```
 
 ### Event key-value: `name`
+
 |                  |         |
 |:-----------------|:--------|
 | **YAML Type**    | string  |
@@ -1613,6 +1629,7 @@ events:
 Defines the name of the event.
 
 ### Event key-value: `description`
+
 |                  |               |
 |:-----------------|:--------------|
 | **YAML Type**    | string        |
@@ -1622,6 +1639,7 @@ Defines the name of the event.
 Specifies a description of the event.
 
 ### Event list object: `in`
+
 |                    |                                |
 |:-------------------|:-------------------------------|
 | **Hosted by**      | `methods` list object          |
@@ -1630,10 +1648,11 @@ Specifies a description of the event.
 
 Each `in` list object defines an input parameter to the event
 
-Please see the `events` sample code above for an example of how 
+Please see the `events` sample code above for an example of how
 `in` parameter lists are used
 
 #### In parameter key-value: `name`
+
 |                  |         |
 |:-----------------|:--------|
 | **YAML Type**    | string  |
@@ -1642,8 +1661,8 @@ Please see the `events` sample code above for an example of how
 
 Specifies the name of the input parameter
 
-
 #### In parameter key-value: `description`
+
 |                  |               |
 |:-----------------|:--------------|
 | **YAML Type**    | string        |
@@ -1652,8 +1671,8 @@ Specifies the name of the input parameter
 
 Contains a description of the input parameter.
 
-
 #### In parameter key-value: `datatype`
+
 |                  |                                 |
 |:-----------------|:--------------------------------|
 | **YAML Type**    | string                          |
@@ -1674,6 +1693,7 @@ If `arraysize` is not specified for an array type, the member array
 can contain an arbitrary number of elements.
 
 #### In parameter key-value: `arraysize`
+
 |                  |                    |
 |:-----------------|:-------------------|
 | **YAML Type**    | int                |
@@ -1686,18 +1706,17 @@ This key is only allowed if the `datatype` element specifies an array
 (ending with `[]`).
 
 #### In parameter key-value: `range`
+
 |                  |                             |
 |:-----------------|:----------------------------|
 | **YAML Type**    | string                      |
 | **Mandatory**    | No                          |
 | **Lark grammar** | [See separate grammar file] |
 
-
 Specifies the legal range for the value.
 
 Please see [value range specification](#value-range-specification)
 chapter for details on how to specify ranges.
-
 
 --------------------
 
@@ -1743,6 +1762,7 @@ properties:
 ```
 
 ### Property key-value: `name`
+
 |                  |         |
 |:-----------------|:--------|
 | **YAML Type**    | string  |
@@ -1752,6 +1772,7 @@ properties:
 Defines the name of the property.
 
 ### Property key-value: `description`
+
 |                  |               |
 |:-----------------|:--------------|
 | **YAML Type**    | string        |
@@ -1761,6 +1782,7 @@ Defines the name of the property.
 Specifies a description of the property.
 
 ### Property key-value: `datatype`
+
 |                  |                                 |
 |:-----------------|:--------------------------------|
 | **YAML Type**    | string                          |
@@ -1781,6 +1803,7 @@ If `arraysize` is not specified for an array type, the member array
 can contain an arbitrary number of elements.
 
 ### Property key-value: `arraysize`
+
 |                  |                    |
 |:-----------------|:-------------------|
 | **YAML Type**    | int                |
@@ -1792,20 +1815,18 @@ Specifies the number of elements in the input parameter array.
 This key is only allowed if the `datatype` element specifies an array
 (ending with `[]`).
 
-
 ### Property parameter key-value: `range`
+
 |                  |                             |
 |:-----------------|:----------------------------|
 | **YAML Type**    | string                      |
 | **Mandatory**    | No                          |
 | **Lark grammar** | [See separate grammar file] |
 
-
 Specifies the legal range for the property.
 
 Please see [value range specification](#value-range-specification)
 chapter for details on how to specify ranges.
-
 
 --------------------
 
@@ -1896,6 +1917,7 @@ namespaces:
 ```
 
 ### Include key-value: `file`
+
 |                  |               |
 |:-----------------|:--------------|
 | **YAML Type**    | string        |
@@ -1905,6 +1927,7 @@ namespaces:
 The path to the file to include
 
 ### Include key-value: `description`
+
 |                  |               |
 |:-----------------|:--------------|
 | **YAML Type**    | string        |
@@ -1912,4 +1935,3 @@ The path to the file to include
 | **Lark grammar** | [YAML string] |
 
 A description of the include directive
-
